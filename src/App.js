@@ -1,26 +1,38 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+
 import './App.css';
+import 'react-infinite-calendar/styles.css';
+
+import HomePage from './components/Home/home';
+import CreatePage from './components/Create/create';
+import RespondPage from './components/Respond/respond';
+import ResultsPage from './components/Results/results';
+
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    // Override default primary color
+	const theme = createMuiTheme({
+		palette: {
+			primary: {
+				main: '#448aff'
+			}
+		}
+	})
+    
+    return (
+        <Router>
+            <MuiThemeProvider theme={theme}>
+            <div>
+                <Route path="/" exact component={HomePage} />
+                <Route path="/create" component={CreatePage} />
+                <Route path="/respond/:id" component={RespondPage} />
+                <Route path="/results/:id" component={ResultsPage} />
+            </div>
+            </MuiThemeProvider>
+        </Router>
+    );
 }
 
 export default App;
