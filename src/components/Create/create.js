@@ -6,6 +6,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import styled from 'styled-components';
 import { formatDate } from './../../util';
+import axios from 'axios';
 
 const CalendarContainer = styled.div`
     padding: 20px 0;
@@ -13,7 +14,7 @@ const CalendarContainer = styled.div`
 
 export default function Create(props) {
     const history = useHistory();
-    let tripName = '';
+    let eventName = '';
     
     // set initial range (today + 2 weeks)
     const today = new Date();
@@ -34,41 +35,42 @@ export default function Create(props) {
         }
     }
 
-    const handleTripNameChange = event => {
-        tripName = event.target.value;
+    const handleEventNameChange = event => {
+        eventName = event.target.value;
     }
 
-    const generateTrip = () => {
-        const tripId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        history.push('/respond/' + tripId);
+    const generateEvent = () => {
+        const eventId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        const payload = {
+            _id: eventId,
+            eventName: eventName,
+            // eventId: eventId,
+            start: range.start,
+            end: range.end,
+        };
 
-        console.log('Create new trip in DB', {
-            tripName: tripName,
-            tripId: tripId,
-            range: range
+        axios({
+            url: '/api/create',
+            method: 'POST',
+            data: payload
         })
-
-        // TODO add to database
-        // {
-        //     trip: ''
-        //     tripId: ''
-        //     dates: [
-        //         '12/12/20': 0, (number of unavailabe responses)
-        //         '12/13/20': 0,
-        //         '12/14/20': 0,
-        //         '12/15/20': 0,
-        //         '12/16/20': 0,
-        //     ]
-        // }
+            .then(() => {
+                console.log('Data has been sent to the server');
+                
+                history.push('/respond/' + eventId);
+            })
+            .catch(() => {
+                console.log('Internal server error');
+            })
     }
 
     return (
         <header className="app-content">
             <TopBar />
             <TextField 
-                id="trip-name" 
-                label="Trip Name"
-                onChange={handleTripNameChange} 
+                id="event-name" 
+                label="Event Name"
+                onChange={handleEventNameChange} 
                 variant="outlined" 
                 color="primary"
             />
@@ -83,7 +85,7 @@ export default function Create(props) {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={generateTrip}
+                onClick={generateEvent}
             >
                 Create
             </Button>
